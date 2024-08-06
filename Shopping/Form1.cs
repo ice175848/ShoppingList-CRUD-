@@ -115,10 +115,30 @@ namespace Shopping
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int id = int.Parse(IDTextBox.Text);
+            if (!int.TryParse(IDTextBox.Text, out int id))
+            {
+                MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string name = NameTextBox.Text;
-            decimal price = Decimal.Parse(PriceTextBox.Text);
-            int quantity = int.Parse(QuantityTextBox.Text);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("請輸入有效的商品名稱。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!decimal.TryParse(PriceTextBox.Text, out decimal price))
+            {
+                MessageBox.Show("請輸入有效的商品價格。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!int.TryParse(QuantityTextBox.Text, out int quantity))
+            {
+                MessageBox.Show("請輸入有效的商品數量。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             var product = new Product(id, name, price, quantity);
             _shoppingCart.AddProduct(product);
@@ -178,10 +198,30 @@ namespace Shopping
 
         private void button3_Click(object sender, EventArgs e)
         {
-            int id = int.Parse(IDTextBox.Text);
+            if (!int.TryParse(IDTextBox.Text, out int id))
+            {
+                MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string name = NameTextBox.Text;
-            decimal price = Decimal.Parse(PriceTextBox.Text);
-            int quantity = int.Parse(QuantityTextBox.Text);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("請輸入有效的商品名稱。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!decimal.TryParse(PriceTextBox.Text, out decimal price))
+            {
+                MessageBox.Show("請輸入有效的商品價格。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!int.TryParse(QuantityTextBox.Text, out int quantity))
+            {
+                MessageBox.Show("請輸入有效的商品數量。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             _shoppingCart.UpdateProduct(id, name, price, quantity);
 
@@ -212,7 +252,7 @@ namespace Shopping
                 if (selectedRow != null)
                 {
                     IDTextBox.Text = selectedRow.Cells["Id"].Value?.ToString();
-                    NameTextBox.Text = selectedRow.Cells["Name"].Value?.ToString();
+                    NameTextBox.Text = selectedRow.Cells["Name"].Value?.ToString() ?? "Unnamed";
                     PriceTextBox.Text = selectedRow.Cells["Price"].Value?.ToString();
                     QuantityTextBox.Text = selectedRow.Cells["Quantity"].Value?.ToString();
                 }
