@@ -40,7 +40,7 @@ namespace Shopping
 
         public class ShoppingCart
         {
-            private List<Product> _products;
+            public List<Product> _products;
 
             public ShoppingCart()
             {
@@ -117,7 +117,14 @@ namespace Shopping
         {
             if (!int.TryParse(IDTextBox.Text, out int id))
             {
+
                 MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            var existingId = _shoppingCart.GetProducts().FirstOrDefault(p => p.Id == id);
+            if (existingId != null)
+            {
+                MessageBox.Show("該ID的商品已經存在。請使用其他ID。", "ID已存在", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -258,13 +265,15 @@ namespace Shopping
                 }
             }
         }
-
+        bool sorted;
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
+            sorted = !sorted;//First time become true
             if (e.ColumnIndex >= 0)
             {
+
                 string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
-                SortOrder sortOrder = GetSortOrder(e.ColumnIndex);
+                SortOrder sortOrder = sorted ? SortOrder.Ascending : SortOrder.Descending;
                 _shoppingCart.SortProducts(columnName, sortOrder);
 
                 RefreshDataGrid();
@@ -297,6 +306,11 @@ namespace Shopping
         {
             // 初始化代碼
             LoadProducts();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
