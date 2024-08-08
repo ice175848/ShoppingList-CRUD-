@@ -19,6 +19,10 @@
             button1 = new Button();
             IDTextBox = new TextBox();
             panel1 = new Panel();
+            label4 = new Label();
+            label3 = new Label();
+            label2 = new Label();
+            label1 = new Label();
             QuantityTextBox = new TextBox();
             PriceTextBox = new TextBox();
             NameTextBox = new TextBox();
@@ -27,10 +31,6 @@
             button4 = new Button();
             button6 = new Button();
             splitContainer1 = new SplitContainer();
-            label1 = new Label();
-            label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -51,11 +51,15 @@
             // 
             // button1
             // 
-            button1.Location = new Point(3, 3);
+            button1.BackgroundImageLayout = ImageLayout.None;
+            button1.Image = Properties.Resources.Create;
+            button1.ImageAlign = ContentAlignment.MiddleLeft;
+            button1.Location = new Point(6, 16);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 4;
             button1.Text = "Create";
+            button1.TextAlign = ContentAlignment.MiddleRight;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -78,10 +82,46 @@
             panel1.Controls.Add(PriceTextBox);
             panel1.Controls.Add(NameTextBox);
             panel1.Controls.Add(IDTextBox);
-            panel1.Location = new Point(84, 3);
+            panel1.Location = new Point(84, 5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(108, 188);
+            panel1.Size = new Size(108, 191);
             panel1.TabIndex = 6;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(3, 143);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 12;
+            label4.Text = "Quantity";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(3, 98);
+            label3.Name = "label3";
+            label3.Size = new Size(34, 15);
+            label3.TabIndex = 12;
+            label3.Text = "Price";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(3, 55);
+            label2.Name = "label2";
+            label2.Size = new Size(42, 15);
+            label2.TabIndex = 12;
+            label2.Text = "Name";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(3, 11);
+            label1.Name = "label1";
+            label1.Size = new Size(18, 15);
+            label1.TabIndex = 12;
+            label1.Text = "Id";
             // 
             // QuantityTextBox
             // 
@@ -112,7 +152,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(3, 38);
+            button2.Location = new Point(6, 56);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 7;
@@ -122,7 +162,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(6, 84);
+            button3.Location = new Point(6, 97);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 8;
@@ -132,7 +172,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(6, 127);
+            button4.Location = new Point(6, 140);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 9;
@@ -142,7 +182,7 @@
             // 
             // button6
             // 
-            button6.Location = new Point(6, 173);
+            button6.Location = new Point(6, 186);
             button6.Name = "button6";
             button6.Size = new Size(75, 23);
             button6.TabIndex = 11;
@@ -158,8 +198,8 @@
             // splitContainer1.Panel1
             // 
             splitContainer1.Panel1.Controls.Add(button1);
-            splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(panel1);
+            splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(button2);
             splitContainer1.Panel1.Controls.Add(button4);
             splitContainer1.Panel1.Controls.Add(button3);
@@ -170,42 +210,6 @@
             splitContainer1.Size = new Size(644, 389);
             splitContainer1.SplitterDistance = 214;
             splitContainer1.TabIndex = 12;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(3, 11);
-            label1.Name = "label1";
-            label1.Size = new Size(18, 15);
-            label1.TabIndex = 12;
-            label1.Text = "Id";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(3, 55);
-            label2.Name = "label2";
-            label2.Size = new Size(42, 15);
-            label2.TabIndex = 12;
-            label2.Text = "Name";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(3, 98);
-            label3.Name = "label3";
-            label3.Size = new Size(34, 15);
-            label3.TabIndex = 12;
-            label3.Text = "Price";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(3, 143);
-            label4.Name = "label4";
-            label4.Size = new Size(55, 15);
-            label4.TabIndex = 12;
-            label4.Text = "Quantity";
             // 
             // Form1
             // 

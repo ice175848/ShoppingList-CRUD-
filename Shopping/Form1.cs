@@ -12,11 +12,39 @@ namespace Shopping
         public Form1()
         {
             InitializeComponent();
+            Image createImage = ResizeImage(Properties.Resources.Create, new Size(22, 22));
+            Image deleteImage = ResizeImage(Properties.Resources.Delete, new Size(22, 22));
+            Image findImage = ResizeImage(Properties.Resources.Find, new Size(22, 22));
+            Image updateImage = ResizeImage(Properties.Resources.Update, new Size(22, 22));
+
+            button1.Image = createImage;
+            button1.ImageAlign = ContentAlignment.MiddleLeft; 
+            button1.TextAlign = ContentAlignment.MiddleRight; 
+
+            button2.Image = findImage;
+            button2.ImageAlign = ContentAlignment.MiddleLeft;
+            button2.TextAlign = ContentAlignment.MiddleRight;
+
+            button3.Image = updateImage;
+            button3.ImageAlign = ContentAlignment.MiddleLeft;
+            button3.TextAlign = ContentAlignment.MiddleRight;
+
+            button4.Image = deleteImage;
+            button4.ImageAlign = ContentAlignment.MiddleLeft;
+            button4.TextAlign = ContentAlignment.MiddleRight;
             _shoppingCart = new ShoppingCart();
-            _shoppingCart.AddDefaultProducts(); // 添加預設資料
+            _shoppingCart.AddDefaultProducts(); 
             LoadProducts();
         }
-
+        private Image ResizeImage(Image image, Size size)
+        {
+            Bitmap resized = new Bitmap(size.Width, size.Height);
+            using (Graphics g = Graphics.FromImage(resized))
+            {
+                g.DrawImage(image, new Rectangle(Point.Empty, size));
+            }
+            return resized;
+        }
         private void LoadProducts()
         {
             dataGridView1.DataSource = _shoppingCart.GetProducts();
@@ -59,12 +87,28 @@ namespace Shopping
 
             public void DeleteProduct(int? id = null, string name = null)
             {
-                var product = _products.FirstOrDefault(p => (id == null || p.Id == id) && (name == null || p.Name == name));
-                if (product != null)
+                // 首先嘗試根據 id 刪除
+                if (id != null)
                 {
-                    _products.Remove(product);
+                    var productById = _products.FirstOrDefault(p => p.Id == id);
+                    if (productById != null)
+                    {
+                        _products.Remove(productById);
+                        return;
+                    }
+                }
+
+                // 如果 id 為 null 或沒有找到符合的產品，則嘗試根據 name 刪除
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    var productByName = _products.FirstOrDefault(p => p.Name == name);
+                    if (productByName != null)
+                    {
+                        _products.Remove(productByName);
+                    }
                 }
             }
+
 
             public void UpdateProduct(int id, string name, decimal price, int quantity)
             {
@@ -113,7 +157,7 @@ namespace Shopping
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)//Create
         {
             if (!int.TryParse(IDTextBox.Text, out int id))
             {
@@ -151,46 +195,44 @@ namespace Shopping
             _shoppingCart.AddProduct(product);
 
             RefreshDataGrid();
-            IDTextBox.Text = (dataGridView1.RowCount + 1).ToString();
+            IDTextBox.Text = (int.Parse(IDTextBox.Text) + 1).ToString();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            int? id = null;
+            // 優先順序: id > Name > price > quantity
+            List<Product> query = null;
+
+            // 優先順序1: id
             if (int.TryParse(IDTextBox.Text, out int idValue))
             {
-                id = idValue;
+                query = _shoppingCart.GetProducts().Where(p => p.Id == idValue).ToList();
+            }
+            // 優先順序2: Name
+            else if (!string.IsNullOrWhiteSpace(NameTextBox.Text))
+            {
+                string name = NameTextBox.Text;
+                query = _shoppingCart.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            // 優先順序3: price
+            else if (decimal.TryParse(PriceTextBox.Text, out decimal priceValue))
+            {
+                query = _shoppingCart.GetProducts().Where(p => p.Price == priceValue).ToList();
+            }
+            // 優先順序4: quantity
+            else if (int.TryParse(QuantityTextBox.Text, out int quantityValue))
+            {
+                query = _shoppingCart.GetProducts().Where(p => p.Quantity == quantityValue).ToList();
             }
 
-            string name = string.IsNullOrWhiteSpace(NameTextBox.Text) ? null : NameTextBox.Text;
-
-            decimal? price = null;
-            if (decimal.TryParse(PriceTextBox.Text, out decimal priceValue))
+            if (query == null || query.Count == 0)
             {
-                price = priceValue;
-            }
-
-            int? quantity = null;
-            if (int.TryParse(QuantityTextBox.Text, out int quantityValue))
-            {
-                quantity = quantityValue;
-            }
-
-            if (id == null && name == null && price == null && quantity == null)
-            {
-                MessageBox.Show("請輸入至少一個查詢條件。");
+                MessageBox.Show("未找到符合條件的商品。", "查詢結果", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            var products = _shoppingCart.GetProducts();
-            var query = products.Where(p =>
-                (id == null || p.Id == id) &&
-                (name == null || p.Name == name) &&
-                (price == null || p.Price == price) &&
-                (quantity == null || p.Quantity == quantity)).ToList();
-
             dataGridView1.DataSource = null;
-            dataGridView1.DataSource = products;
+            dataGridView1.DataSource = _shoppingCart.GetProducts();
 
             dataGridView1.ClearSelection();
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -203,7 +245,8 @@ namespace Shopping
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+
+        private void button3_Click(object sender, EventArgs e)//Update
         {
             if (!int.TryParse(IDTextBox.Text, out int id))
             {
@@ -235,20 +278,22 @@ namespace Shopping
             RefreshDataGrid();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)//Delete
         {
             int? id = null;
+            string? name = null;
+
             if (int.TryParse(IDTextBox.Text, out int idValue))
             {
                 id = idValue;
             }
 
-            string name = string.IsNullOrWhiteSpace(NameTextBox.Text) ? null : NameTextBox.Text;
-
+            name = string.IsNullOrWhiteSpace(NameTextBox.Text) ? null : NameTextBox.Text;
             _shoppingCart.DeleteProduct(id, name);
 
             RefreshDataGrid();
         }
+
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -271,7 +316,6 @@ namespace Shopping
             sorted = !sorted;//First time become true
             if (e.ColumnIndex >= 0)
             {
-
                 string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
                 SortOrder sortOrder = sorted ? SortOrder.Ascending : SortOrder.Descending;
                 _shoppingCart.SortProducts(columnName, sortOrder);
@@ -308,7 +352,7 @@ namespace Shopping
             LoadProducts();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e)//Print
         {
 
         }
