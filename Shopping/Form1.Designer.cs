@@ -15,6 +15,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             dataGridView1 = new DataGridView();
             button1 = new Button();
             IDTextBox = new TextBox();
@@ -31,6 +32,9 @@
             button4 = new Button();
             button6 = new Button();
             splitContainer1 = new SplitContainer();
+            printDocument1 = new System.Drawing.Printing.PrintDocument();
+            printPreviewDialog1 = new PrintPreviewDialog();
+            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -52,14 +56,11 @@
             // button1
             // 
             button1.BackgroundImageLayout = ImageLayout.None;
-            button1.Image = Properties.Resources.Create;
-            button1.ImageAlign = ContentAlignment.MiddleLeft;
             button1.Location = new Point(6, 16);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 4;
             button1.Text = "Create";
-            button1.TextAlign = ContentAlignment.MiddleRight;
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -182,11 +183,11 @@
             // 
             // button6
             // 
-            button6.Location = new Point(6, 186);
+            button6.Location = new Point(6, 228);
             button6.Name = "button6";
-            button6.Size = new Size(75, 23);
+            button6.Size = new Size(186, 23);
             button6.TabIndex = 11;
-            button6.Text = "Print";
+            button6.Text = "To Shopping";
             button6.UseVisualStyleBackColor = true;
             button6.Click += button6_Click;
             // 
@@ -197,6 +198,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(button5);
             splitContainer1.Panel1.Controls.Add(button1);
             splitContainer1.Panel1.Controls.Add(panel1);
             splitContainer1.Panel1.Controls.Add(button6);
@@ -210,6 +212,25 @@
             splitContainer1.Size = new Size(644, 389);
             splitContainer1.SplitterDistance = 214;
             splitContainer1.TabIndex = 12;
+            // 
+            // printPreviewDialog1
+            // 
+            printPreviewDialog1.AutoScrollMargin = new Size(0, 0);
+            printPreviewDialog1.AutoScrollMinSize = new Size(0, 0);
+            printPreviewDialog1.ClientSize = new Size(400, 300);
+            printPreviewDialog1.Enabled = true;
+            printPreviewDialog1.Icon = (Icon)resources.GetObject("printPreviewDialog1.Icon");
+            printPreviewDialog1.Name = "printPreviewDialog1";
+            printPreviewDialog1.Visible = false;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(6, 184);
+            button5.Name = "button5";
+            button5.Size = new Size(75, 23);
+            button5.TabIndex = 13;
+            button5.Text = "button5";
+            button5.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -246,5 +267,8 @@
         private Label label4;
         private Label label3;
         private Label label2;
+        private System.Drawing.Printing.PrintDocument printDocument1;
+        private PrintPreviewDialog printPreviewDialog1;
+        private Button button5;
     }
 }

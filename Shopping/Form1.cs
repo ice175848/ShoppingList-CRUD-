@@ -1,21 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Drawing.Printing;
 using System.Windows.Forms;
 
 namespace Shopping
 {
     public partial class Form1 : Form
     {
-        private ShoppingCart _shoppingCart;
+        public ShoppingCart _shoppingCart;
 
         public Form1()
         {
             InitializeComponent();
-            Image createImage = ResizeImage(Properties.Resources.Create, new Size(22, 22));
-            Image deleteImage = ResizeImage(Properties.Resources.Delete, new Size(22, 22));
-            Image findImage = ResizeImage(Properties.Resources.Find, new Size(22, 22));
-            Image updateImage = ResizeImage(Properties.Resources.Update, new Size(22, 22));
+            Image createImage = ResizeImage(Properties.Resources.Create, new Size(20, 20));
+            Image deleteImage = ResizeImage(Properties.Resources.Delete, new Size(20, 20));
+            Image findImage = ResizeImage(Properties.Resources.Find, new Size(20, 20));
+            Image updateImage = ResizeImage(Properties.Resources.Update, new Size(20, 20));
 
             button1.Image = createImage;
             button1.ImageAlign = ContentAlignment.MiddleLeft; 
@@ -45,7 +47,7 @@ namespace Shopping
             }
             return resized;
         }
-        private void LoadProducts()
+        internal void LoadProducts()
         {
             dataGridView1.DataSource = _shoppingCart.GetProducts();
         }
@@ -339,7 +341,7 @@ namespace Shopping
             }
         }
 
-        private void RefreshDataGrid()
+        public void RefreshDataGrid()
         {
             dataGridView1.DataSource = null;
             dataGridView1.DataSource = _shoppingCart.GetProducts();
@@ -354,7 +356,11 @@ namespace Shopping
 
         private void button6_Click(object sender, EventArgs e)//Print
         {
+            this.Hide();
+            Form2 form2 = new Form2(_shoppingCart);
+            form2.ShowDialog(); 
 
+            this.Show();
         }
     }
 }
