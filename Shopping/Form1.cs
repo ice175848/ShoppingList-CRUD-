@@ -357,7 +357,7 @@ namespace Shopping
         private void button6_Click(object sender, EventArgs e)//Print
         {
             this.Hide();
-            Form2 form2 = new Form2(_shoppingCart);
+            Form2 form2 = new Form2(_shoppingCart,this);
             form2.ShowDialog(); 
 
             this.Show();

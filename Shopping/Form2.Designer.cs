@@ -53,6 +53,8 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(12, 12);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new Size(464, 383);
             dataGridView1.TabIndex = 2;
             // 
@@ -64,6 +66,7 @@
             button1.TabIndex = 3;
             button1.Text = "=>";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // numericUpDown1
             // 
@@ -78,6 +81,8 @@
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView2.Location = new Point(521, 12);
             dataGridView2.Name = "dataGridView2";
+            dataGridView2.ReadOnly = true;
+            dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView2.Size = new Size(463, 383);
             dataGridView2.TabIndex = 5;
             // 
@@ -89,6 +94,7 @@
             button2.TabIndex = 6;
             button2.Text = "<=";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // Form2
             // 

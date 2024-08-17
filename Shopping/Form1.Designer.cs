@@ -32,9 +32,9 @@
             button4 = new Button();
             button6 = new Button();
             splitContainer1 = new SplitContainer();
+            button5 = new Button();
             printDocument1 = new System.Drawing.Printing.PrintDocument();
             printPreviewDialog1 = new PrintPreviewDialog();
-            button5 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -48,6 +48,7 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(3, 3);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
             dataGridView1.Size = new Size(420, 383);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellClick += dataGridView1_CellClick;
@@ -213,6 +214,15 @@
             splitContainer1.SplitterDistance = 214;
             splitContainer1.TabIndex = 12;
             // 
+            // button5
+            // 
+            button5.Location = new Point(6, 184);
+            button5.Name = "button5";
+            button5.Size = new Size(75, 23);
+            button5.TabIndex = 13;
+            button5.Text = "button5";
+            button5.UseVisualStyleBackColor = true;
+            // 
             // printPreviewDialog1
             // 
             printPreviewDialog1.AutoScrollMargin = new Size(0, 0);
@@ -222,15 +232,6 @@
             printPreviewDialog1.Icon = (Icon)resources.GetObject("printPreviewDialog1.Icon");
             printPreviewDialog1.Name = "printPreviewDialog1";
             printPreviewDialog1.Visible = false;
-            // 
-            // button5
-            // 
-            button5.Location = new Point(6, 184);
-            button5.Name = "button5";
-            button5.Size = new Size(75, 23);
-            button5.TabIndex = 13;
-            button5.Text = "button5";
-            button5.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
