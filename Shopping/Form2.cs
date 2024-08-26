@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using static Shopping.Form1;
+using static Shopping.Form2;
 
 namespace Shopping
 {
     public partial class Form2 : Form
     {
-        private Form1 _form1;
         private ShoppingCart _shoppingCart;
         private BuyingList _buyingList;
-        private Product _selectedProduct; // 用來暫存選中的Product
 
         public Form2(ShoppingCart shoppingCart, Form1 form1)
         {
             InitializeComponent();
             _shoppingCart = shoppingCart;
-            _form1 = form1;
-            _buyingList = new BuyingList();
+            _buyingList = form1.BuyingList;
+            numericUpDown1.Minimum = 1;
         }
 
         private void Form2_Load(object sender, EventArgs e)
@@ -29,13 +29,25 @@ namespace Shopping
 
         private void LoadProducts()
         {
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = _shoppingCart.GetProducts();
-            dataGridView1.Refresh();
-            dataGridView2.DataSource = null;
-            dataGridView2.DataSource = _buyingList.GetProducts();
-            dataGridView2.Refresh();
+            int selectedRowIndex1 = dgv1.CurrentCell != null ? dgv1.CurrentCell.RowIndex : -1;
+            int selectedRowIndex2 = dgv2.CurrentCell != null ? dgv2.CurrentCell.RowIndex : -1;
+
+            dgv1.DataSource = new BindingList<Product>(_shoppingCart.GetProducts());
+            dgv2.DataSource = new BindingList<Product>(_buyingList.GetProducts());
+
+            if (selectedRowIndex1 >= 0 && selectedRowIndex1 < dgv1.Rows.Count)
+            {
+                dgv1.CurrentCell = dgv1.Rows[selectedRowIndex1].Cells[0];
+            }
+
+            if (selectedRowIndex2 >= 0 && selectedRowIndex2 < dgv2.Rows.Count)
+            {
+                dgv2.CurrentCell = dgv2.Rows[selectedRowIndex2].Cells[0];
+            }
+
+            UpdateTotals();
         }
+
 
         public class BuyingList
         {
@@ -60,96 +72,149 @@ namespace Shopping
             {
                 return _list;
             }
+
         }
 
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void UpdateTotals()
         {
-            if (e.RowIndex >= 0 && e.RowIndex < dataGridView1.Rows.Count && e.ColumnIndex >= 0)
-            {
-                var selectedRow = dataGridView1.Rows[e.RowIndex];
-                var selectedProduct = selectedRow.DataBoundItem as Product;
+            // 計算 DataGridView1 中的庫存總數
+            int totalStock = _shoppingCart.GetProducts().Sum(p => p.Quantity);
 
-                if (selectedProduct != null)
-                {
-                    var productsInDataGridView2 = dataGridView2.DataSource as BindingList<Product>;
-                    if (productsInDataGridView2 != null)
-                    {
-                        productsInDataGridView2.Add(selectedProduct);
-                    }
-                    else
-                    {
-                        // 如果DataGridView2沒有綁定到BindingList<Product>，先創建並綁定
-                        productsInDataGridView2 = new BindingList<Product> { selectedProduct };
-                        dataGridView2.DataSource = productsInDataGridView2;
-                    }
-                    LoadProducts();
-                }
-            }
+            // 計算 DataGridView2 中的購物車總數
+            int totalCart = _buyingList.GetProducts().Sum(p => p.Quantity);
+
+            // 將結果顯示在 DataGridView1 和 DataGridView2 中的總數行或其他地方
+            // 如果你有特定的位置來顯示這些總數，請更新代碼
+            Console.WriteLine($"庫存總數: {totalStock}");
+            Console.WriteLine($"購物車總數: {totalCart}");
         }
+
         private void button1_Click(object sender, EventArgs e)
         {
             // 檢查是否選取了DataGridView1中的行
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (dgv1.SelectedRows.Count > 0)
             {
-                // 取得選取的行
-                DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
-
-                // 取得選取的Product物件
+                DataGridViewRow selectedRow = dgv1.SelectedRows[0];
                 Product selectedProduct = selectedRow.DataBoundItem as Product;
 
                 if (selectedProduct != null)
                 {
-                    // 檢查_buyingList中是否已存在該產品
-                    var existingProduct = _buyingList._list.FirstOrDefault(p => p.Name == selectedProduct.Name);
+                    int quantityToMove = (int)numericUpDown1.Value;
 
-                    if (existingProduct != null)
+                    if (selectedProduct.Quantity < quantityToMove)
                     {
-                        // 如果存在，則增加該產品的數量
-                        existingProduct.Quantity += (int)numericUpDown1.Value;
+                        MessageBox.Show("庫存不足，無法加入購物車。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    selectedProduct.Quantity -= quantityToMove;
+
+                    var existingProductInCart = _buyingList._list.FirstOrDefault(p => p.Id == selectedProduct.Id);
+
+                    if (existingProductInCart != null)
+                    {
+                        existingProductInCart.Quantity += quantityToMove;
                     }
                     else
                     {
-                        // 如果不存在，將產品新增到購買列表中，並設定數量為numericUpDown的值
-                        _buyingList.AddProduct(selectedProduct);
-                        selectedProduct.Quantity = (int)numericUpDown1.Value;
+                        var productToAdd = new Product(selectedProduct.Id, selectedProduct.Name, selectedProduct.Price, quantityToMove);
+                        _buyingList.AddProduct(productToAdd);
                     }
 
-                    // 更新DataGridView2的資料
-                    dataGridView2.DataSource = null;
-                    dataGridView2.DataSource = _buyingList.GetProducts();
+                    LoadProducts(); // 重新加載產品並更新總數
                 }
             }
             else
             {
-                // 如果沒有選取任何行，顯示提示訊息
-                MessageBox.Show("請選取一筆資料再進行操作。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                MessageBox.Show("請選取一個商品加入購物車。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(dataGridView2.SelectedRows.Count>0)
+            if (dgv2.SelectedRows.Count > 0)
             {
-                DataGridViewRow selectedRow = dataGridView2.SelectedRows[0];
-                Product selectedProduct = selectedRow.DataBoundItem as Product;
-                if(selectedProduct!=null)
+                var selectedRow = dgv2.SelectedRows[0];
+                var selectedProduct = selectedRow.DataBoundItem as Product;
+
+                if (selectedProduct != null)
                 {
-                    selectedProduct.Quantity -= (int)numericUpDown1.Value;
+                    int quantityToMove = (int)numericUpDown1.Value;
+
+                    if (selectedProduct.Quantity < quantityToMove)
+                    {
+                        MessageBox.Show("購物車內商品數量不足，無法返還庫存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // 從購物車中減少商品數量
+                    selectedProduct.Quantity -= quantityToMove;
+
+                    // 如果購物車內的數量變為0，則從購物車中移除該商品
+                    if (selectedProduct.Quantity == 0)
+                    {
+                        _buyingList.RemoveProduct(selectedProduct);
+                    }
+
+                    // 檢查庫存中是否已存在該商品
+                    var existingProductInStock = _shoppingCart.GetProducts().FirstOrDefault(p => p.Id == selectedProduct.Id);
+
+                    if (existingProductInStock != null)
+                    {
+                        // 如果存在，則增加庫存中的數量
+                        existingProductInStock.Quantity += quantityToMove;
+                    }
+
                     LoadProducts();
-                }
-                else
-                {
-                    MessageBox.Show("不存在");
-                    return;
                 }
             }
             else
             {
-                // 如果沒有選取任何行，顯示提示訊息
-                MessageBox.Show("請選取一筆資料再進行操作。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                MessageBox.Show("請選取一個商品返還庫存。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.RowIndex < dgv1.Rows.Count)
+            {
+                // 在這裡，你可以執行需要的操作，比如將選中的產品詳細信息顯示在表單上
+                DataGridViewRow selectedRow = dgv1.Rows[e.RowIndex];
+                Product selectedProduct = selectedRow.DataBoundItem as Product;
+
+                if (selectedProduct != null)
+                {
+                    // 例如，這裡可以顯示選中的產品信息到UI的其他部分
+                    Console.WriteLine($"選中產品: {selectedProduct.Name}, 庫存: {selectedProduct.Quantity}");
+                }
+            }
+        }
+
+        bool dgv1_sorted;
+        private void dgv1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgv1_sorted = !dgv1_sorted;//First time become true
+            if (e.ColumnIndex >= 0)
+            {
+                string columnName = dgv1.Columns[e.ColumnIndex].Name;
+                SortOrder sortOrder = dgv1_sorted ? SortOrder.Ascending : SortOrder.Descending;
+                _shoppingCart.SortProducts(columnName, sortOrder);
+                LoadProducts();
+            }
+
+        }
+        bool dgv2_sorted;
+
+        private void dgv2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            dgv2_sorted = !dgv2_sorted;//First time become true
+            if (e.ColumnIndex >= 0)
+            {
+                string columnName = dgv2.Columns[e.ColumnIndex].Name;
+                SortOrder sortOrder = dgv2_sorted ? SortOrder.Ascending : SortOrder.Descending;
+                //BuyingList.SortProducts(columnName, sortOrder);待修改
+                LoadProducts();
+            }
+
         }
     }
 }

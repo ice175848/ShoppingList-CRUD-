@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            dataGridView1 = new DataGridView();
+            dgv1 = new DataGridView();
             button1 = new Button();
             numericUpDown1 = new NumericUpDown();
-            dataGridView2 = new DataGridView();
+            dgv2 = new DataGridView();
             button2 = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgv1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dgv2).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -48,15 +48,17 @@
             label1.TabIndex = 1;
             label1.Text = "商品";
             // 
-            // dataGridView1
+            // dgv1
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 12);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new Size(464, 383);
-            dataGridView1.TabIndex = 2;
+            dgv1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv1.Location = new Point(12, 12);
+            dgv1.Name = "dgv1";
+            dgv1.ReadOnly = true;
+            dgv1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv1.Size = new Size(464, 383);
+            dgv1.TabIndex = 2;
+            dgv1.CellClick += dataGridView1_CellClick;
+            dgv1.ColumnHeaderMouseClick += dgv1_ColumnHeaderMouseClick;
             // 
             // button1
             // 
@@ -76,15 +78,16 @@
             numericUpDown1.TabIndex = 4;
             numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
-            // dataGridView2
+            // dgv2
             // 
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Location = new Point(521, 12);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.ReadOnly = true;
-            dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridView2.Size = new Size(463, 383);
-            dataGridView2.TabIndex = 5;
+            dgv2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgv2.Location = new Point(521, 12);
+            dgv2.Name = "dgv2";
+            dgv2.ReadOnly = true;
+            dgv2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgv2.Size = new Size(463, 383);
+            dgv2.TabIndex = 5;
+            dgv2.ColumnHeaderMouseClick += dgv2_ColumnHeaderMouseClick;
             // 
             // button2
             // 
@@ -102,17 +105,17 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1000, 450);
             Controls.Add(button2);
-            Controls.Add(dataGridView2);
+            Controls.Add(dgv2);
             Controls.Add(numericUpDown1);
             Controls.Add(button1);
-            Controls.Add(dataGridView1);
+            Controls.Add(dgv1);
             Controls.Add(label1);
             Name = "Form2";
             Text = "購物車介面";
             Load += Form2_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgv1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dgv2).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -124,5 +127,7 @@
         private NumericUpDown numericUpDown1;
         private DataGridView dataGridView2;
         private Button button2;
+        private DataGridView dgv1;
+        private DataGridView dgv2;
     }
 }

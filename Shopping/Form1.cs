@@ -4,16 +4,20 @@ using System.Linq;
 using System.IO;
 using System.Drawing.Printing;
 using System.Windows.Forms;
+using static Shopping.Form2;
 
 namespace Shopping
 {
     public partial class Form1 : Form
     {
         public ShoppingCart _shoppingCart;
+        public BuyingList BuyingList { get; private set; }
 
         public Form1()
         {
             InitializeComponent();
+            BuyingList = new BuyingList();
+
             Image createImage = ResizeImage(Properties.Resources.Create, new Size(20, 20));
             Image deleteImage = ResizeImage(Properties.Resources.Delete, new Size(20, 20));
             Image findImage = ResizeImage(Properties.Resources.Find, new Size(20, 20));
