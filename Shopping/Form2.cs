@@ -49,28 +49,20 @@ namespace Shopping
         }
 
 
-        public class BuyingList
+        public class BuyingList:ProductList
         {
-            public List<Product> _list;
-
-            public BuyingList()
+            public BuyingList() : base()
             {
-                _list = new List<Product>();
             }
 
             public void AddProduct(Product product)
             {
-                _list.Add(product);
+                _products.Add(product);
             }
 
             public void RemoveProduct(Product product)
             {
-                _list.Remove(product);
-            }
-
-            public List<Product> GetProducts()
-            {
-                return _list;
+                _products.Remove(product);
             }
 
         }
@@ -109,7 +101,7 @@ namespace Shopping
 
                     selectedProduct.Quantity -= quantityToMove;
 
-                    var existingProductInCart = _buyingList._list.FirstOrDefault(p => p.Id == selectedProduct.Id);
+                    var existingProductInCart = _buyingList._products.FirstOrDefault(p => p.Id == selectedProduct.Id);
 
                     if (existingProductInCart != null)
                     {
@@ -211,10 +203,9 @@ namespace Shopping
             {
                 string columnName = dgv2.Columns[e.ColumnIndex].Name;
                 SortOrder sortOrder = dgv2_sorted ? SortOrder.Ascending : SortOrder.Descending;
-                //BuyingList.SortProducts(columnName, sortOrder);待修改
+                _buyingList.SortProducts(columnName, sortOrder);
                 LoadProducts();
             }
-
         }
     }
 }

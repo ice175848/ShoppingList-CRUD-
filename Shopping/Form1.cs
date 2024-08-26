@@ -71,14 +71,56 @@ namespace Shopping
                 Quantity = quantity;
             }
         }
-
-        public class ShoppingCart
+        public class ProductList
         {
             public List<Product> _products;
 
-            public ShoppingCart()
+            public ProductList()
             {
                 _products = new List<Product>();
+            }
+
+            public void SortProducts(string columnName, SortOrder sortOrder)
+            {
+                switch (columnName)
+                {
+                    case "Id":
+                        _products = (sortOrder == SortOrder.Ascending) ?
+                            _products.OrderBy(p => p.Id).ToList() :
+                            _products.OrderByDescending(p => p.Id).ToList();
+                        break;
+                    case "Name":
+                        _products = (sortOrder == SortOrder.Ascending) ?
+                            _products.OrderBy(p => p.Name).ToList() :
+                            _products.OrderByDescending(p => p.Name).ToList();
+                        break;
+                    case "Price":
+                        _products = (sortOrder == SortOrder.Ascending) ?
+                            _products.OrderBy(p => p.Price).ToList() :
+                            _products.OrderByDescending(p => p.Price).ToList();
+                        break;
+                    case "Quantity":
+                        _products = (sortOrder == SortOrder.Ascending) ?
+                            _products.OrderBy(p => p.Quantity).ToList() :
+                            _products.OrderByDescending(p => p.Quantity).ToList();
+                        break;
+                }
+            }
+
+            public List<Product> GetProducts()
+            {
+                return _products;
+            }
+        }
+
+
+        public class ShoppingCart:ProductList
+        {
+            //public List<Product> _products;
+
+            public ShoppingCart():base()
+            {
+                //_products = new List<Product>();
             }
 
             public void AddProduct(Product product)
@@ -89,6 +131,22 @@ namespace Shopping
             public List<Product> GetProducts()
             {
                 return _products;
+            }
+            public class BuyingList : ProductList
+            {
+                public BuyingList() : base()
+                {
+                }
+
+                public void AddProduct(Product product)
+                {
+                    _products.Add(product);
+                }
+
+                public void RemoveProduct(Product product)
+                {
+                    _products.Remove(product);
+                }
             }
 
             public void DeleteProduct(int? id = null, string name = null)
@@ -124,33 +182,6 @@ namespace Shopping
                     product.Name = name;
                     product.Price = price;
                     product.Quantity = quantity;
-                }
-            }
-
-            public void SortProducts(string columnName, SortOrder sortOrder)
-            {
-                switch (columnName)
-                {
-                    case "Id":
-                        _products = (sortOrder == SortOrder.Ascending) ?
-                            _products.OrderBy(p => p.Id).ToList() :
-                            _products.OrderByDescending(p => p.Id).ToList();
-                        break;
-                    case "Name":
-                        _products = (sortOrder == SortOrder.Ascending) ?
-                            _products.OrderBy(p => p.Name).ToList() :
-                            _products.OrderByDescending(p => p.Name).ToList();
-                        break;
-                    case "Price":
-                        _products = (sortOrder == SortOrder.Ascending) ?
-                            _products.OrderBy(p => p.Price).ToList() :
-                            _products.OrderByDescending(p => p.Price).ToList();
-                        break;
-                    case "Quantity":
-                        _products = (sortOrder == SortOrder.Ascending) ?
-                            _products.OrderBy(p => p.Quantity).ToList() :
-                            _products.OrderByDescending(p => p.Quantity).ToList();
-                        break;
                 }
             }
 
