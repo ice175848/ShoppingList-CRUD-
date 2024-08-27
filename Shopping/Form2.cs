@@ -49,7 +49,7 @@ namespace Shopping
         }
 
 
-        public class BuyingList:ProductList
+        public class BuyingList : ProductList
         {
             public BuyingList() : base()
             {
@@ -206,6 +206,58 @@ namespace Shopping
                 _buyingList.SortProducts(columnName, sortOrder);
                 LoadProducts();
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            List<Product> query = null;
+            if (!string.IsNullOrWhiteSpace(NameTextBox.Text))
+            {
+                string name = NameTextBox.Text;
+                query = _shoppingCart.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                dgv1.ClearSelection();
+                foreach (DataGridViewRow row in dgv1.Rows)
+                {
+                    var product = row.DataBoundItem as Product;
+                    if (product != null && query.Contains(product))
+                    {
+                        row.Selected = true;
+                    }
+                }
+                query = _buyingList.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
+
+                dgv2.ClearSelection();
+                foreach (DataGridViewRow row in dgv2.Rows)
+                {
+                    var product = row.DataBoundItem as Product;
+                    if (product != null && query.Contains(product))
+                    {
+                        row.Selected = true;
+                    }
+                }
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // 構建顯示購物車內容的訊息
+            string message = "購物車內容:\n\n";
+            int totalQuantity = 0;
+            decimal totalAmount = 0m;
+
+            foreach (var product in _buyingList.GetProducts())
+            {
+                message += $"品項: {product.Name}\n數量: {product.Quantity}\n金額: {product.Price * product.Quantity:C}\n\n";
+                totalQuantity += product.Quantity;
+                totalAmount += product.Price * product.Quantity;
+            }
+
+            message += $"總數量: {totalQuantity}\n";
+            message += $"總金額: {totalAmount:C}\n";
+
+            // 顯示訊息框，帶有確認按鈕
+            MessageBox.Show(message, "購物車總覽", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

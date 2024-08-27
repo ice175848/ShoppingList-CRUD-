@@ -34,6 +34,9 @@
             numericUpDown1 = new NumericUpDown();
             dgv2 = new DataGridView();
             button2 = new Button();
+            NameTextBox = new TextBox();
+            button3 = new Button();
+            button4 = new Button();
             ((System.ComponentModel.ISupportInitialize)dgv1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgv2).BeginInit();
@@ -99,11 +102,44 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // NameTextBox
+            // 
+            NameTextBox.Location = new Point(415, 415);
+            NameTextBox.Name = "NameTextBox";
+            NameTextBox.PlaceholderText = "Name";
+            NameTextBox.Size = new Size(100, 23);
+            NameTextBox.TabIndex = 7;
+            NameTextBox.Text = "Orange";
+            // 
+            // button3
+            // 
+            button3.Location = new Point(521, 415);
+            button3.Name = "button3";
+            button3.Size = new Size(75, 23);
+            button3.TabIndex = 8;
+            button3.Text = "Search";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button4
+            // 
+            button4.BackColor = SystemColors.ActiveCaption;
+            button4.Location = new Point(460, 444);
+            button4.Name = "button4";
+            button4.Size = new Size(75, 23);
+            button4.TabIndex = 9;
+            button4.Text = "結帳";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 450);
+            ClientSize = new Size(1000, 493);
+            Controls.Add(button4);
+            Controls.Add(button3);
+            Controls.Add(NameTextBox);
             Controls.Add(button2);
             Controls.Add(dgv2);
             Controls.Add(numericUpDown1);
@@ -129,5 +165,8 @@
         private Button button2;
         private DataGridView dgv1;
         private DataGridView dgv2;
+        private TextBox NameTextBox;
+        private Button button3;
+        private Button button4;
     }
 }
