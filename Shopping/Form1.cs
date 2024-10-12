@@ -11,12 +11,12 @@ namespace Shopping
     public partial class Form1 : Form
     {
         public ShoppingCart _shoppingCart;
-        public BuyingList BuyingList { get; private set; }
+        public Form2.BuyingList BuyingList { get; private set; }
 
         public Form1()
         {
             InitializeComponent();
-            BuyingList = new BuyingList();
+            BuyingList = new Form2.BuyingList();
 
             Image createImage = ResizeImage(Properties.Resources.Create, new Size(20, 20));
             Image deleteImage = ResizeImage(Properties.Resources.Delete, new Size(20, 20));
@@ -24,8 +24,8 @@ namespace Shopping
             Image updateImage = ResizeImage(Properties.Resources.Update, new Size(20, 20));
 
             button1.Image = createImage;
-            button1.ImageAlign = ContentAlignment.MiddleLeft; 
-            button1.TextAlign = ContentAlignment.MiddleRight; 
+            button1.ImageAlign = ContentAlignment.MiddleLeft;
+            button1.TextAlign = ContentAlignment.MiddleRight;
 
             button2.Image = findImage;
             button2.ImageAlign = ContentAlignment.MiddleLeft;
@@ -39,8 +39,10 @@ namespace Shopping
             button4.ImageAlign = ContentAlignment.MiddleLeft;
             button4.TextAlign = ContentAlignment.MiddleRight;
             _shoppingCart = new ShoppingCart();
-            _shoppingCart.AddDefaultProducts(); 
+            _shoppingCart.AddDefaultProducts();
             LoadProducts();
+
+
         }
         private Image ResizeImage(Image image, Size size)
         {
