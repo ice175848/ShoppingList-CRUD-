@@ -13,6 +13,7 @@ namespace Shopping
     {
         private ShoppingCart _shoppingCart;
         private BuyingList _buyingList;
+        public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
 
         public Form2(ShoppingCart shoppingCart, Form1 form1)
         {
@@ -258,6 +259,13 @@ namespace Shopping
 
             // 顯示訊息框，帶有確認按鈕
             MessageBox.Show(message, "購物車總覽", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form1 form1= new Form1();
+            form1.Show();  
+            this.Close();  // 關閉當前的 Form
         }
     }
 }

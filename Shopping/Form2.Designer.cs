@@ -37,6 +37,7 @@
             NameTextBox = new TextBox();
             button3 = new Button();
             button4 = new Button();
+            linkLabel1 = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)dgv1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgv2).BeginInit();
@@ -45,7 +46,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(230, 398);
+            label1.Location = new Point(234, 455);
             label1.Name = "label1";
             label1.Size = new Size(31, 15);
             label1.TabIndex = 1;
@@ -54,7 +55,7 @@
             // dgv1
             // 
             dgv1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgv1.Location = new Point(12, 12);
+            dgv1.Location = new Point(16, 69);
             dgv1.Name = "dgv1";
             dgv1.ReadOnly = true;
             dgv1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -65,7 +66,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(482, 215);
+            button1.Location = new Point(486, 272);
             button1.Name = "button1";
             button1.Size = new Size(33, 23);
             button1.TabIndex = 3;
@@ -75,7 +76,7 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(482, 186);
+            numericUpDown1.Location = new Point(486, 243);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(33, 23);
             numericUpDown1.TabIndex = 4;
@@ -84,7 +85,7 @@
             // dgv2
             // 
             dgv2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgv2.Location = new Point(521, 12);
+            dgv2.Location = new Point(525, 69);
             dgv2.Name = "dgv2";
             dgv2.ReadOnly = true;
             dgv2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -94,7 +95,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(482, 244);
+            button2.Location = new Point(486, 301);
             button2.Name = "button2";
             button2.Size = new Size(33, 23);
             button2.TabIndex = 6;
@@ -104,7 +105,7 @@
             // 
             // NameTextBox
             // 
-            NameTextBox.Location = new Point(415, 415);
+            NameTextBox.Location = new Point(419, 472);
             NameTextBox.Name = "NameTextBox";
             NameTextBox.PlaceholderText = "Name";
             NameTextBox.Size = new Size(100, 23);
@@ -113,7 +114,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(521, 415);
+            button3.Location = new Point(525, 472);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 8;
@@ -124,7 +125,7 @@
             // button4
             // 
             button4.BackColor = SystemColors.ActiveCaption;
-            button4.Location = new Point(460, 444);
+            button4.Location = new Point(464, 501);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 9;
@@ -132,11 +133,23 @@
             button4.UseVisualStyleBackColor = false;
             button4.Click += button4_Click;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(16, 501);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(55, 15);
+            linkLabel1.TabIndex = 0;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "商品介面";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 493);
+            ClientSize = new Size(1000, 531);
+            Controls.Add(linkLabel1);
             Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(NameTextBox);
@@ -168,5 +181,6 @@
         private TextBox NameTextBox;
         private Button button3;
         private Button button4;
+        private LinkLabel linkLabel1;
     }
 }
