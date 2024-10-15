@@ -161,6 +161,7 @@
             Controls.Add(label1);
             Name = "Form2";
             Text = "購物車介面";
+            FormClosed += Form2_FormClosed;
             Load += Form2_Load;
             ((System.ComponentModel.ISupportInitialize)dgv1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();

@@ -42,7 +42,7 @@ namespace Shopping
             button4.ImageAlign = ContentAlignment.MiddleLeft;
             button4.TextAlign = ContentAlignment.MiddleRight;
             _shoppingCart = new ShoppingCart();
-            _shoppingCart.AddDefaultProducts();
+            //_shoppingCart.AddDefaultProducts();
             LoadProducts();
 
 

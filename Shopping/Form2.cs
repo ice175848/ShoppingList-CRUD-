@@ -263,9 +263,14 @@ namespace Shopping
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Form1 form1= new Form1();
-            form1.Show();  
+            Form1 form1 = new Form1();
+            form1.Show();
             this.Close();  // 關閉當前的 Form
+        }
+
+        private void Form2_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();  // 完全關閉應用程式
         }
     }
 }
