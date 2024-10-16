@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.SqlClient;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,11 +17,18 @@ namespace Shopping
         private BuyingList _buyingList;
         public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
 
-        public Form2(ShoppingCart shoppingCart, Form1 form1)
+        public Form2()
         {
             InitializeComponent();
-            _shoppingCart = shoppingCart;
-            _buyingList = form1.BuyingList;
+            if (_shoppingCart == null)
+            {
+                _shoppingCart = new ShoppingCart();  // 在這裡初始化
+            }
+            if (_buyingList == null)
+            {
+                _buyingList = new BuyingList();  // 初始化購物清單
+            }
+
             numericUpDown1.Minimum = 1;
         }
 
@@ -30,6 +39,18 @@ namespace Shopping
 
         private void LoadProducts()
         {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT * FROM Products";  // 確保使用正確的 SQL 查詢語句
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                DataTable productsTable = new DataTable();
+                adapter.Fill(productsTable);
+
+                // 綁定資料到 DataGridView
+                dgv1.DataSource = productsTable;
+            }
+            /*
             int selectedRowIndex1 = dgv1.CurrentCell != null ? dgv1.CurrentCell.RowIndex : -1;
             int selectedRowIndex2 = dgv2.CurrentCell != null ? dgv2.CurrentCell.RowIndex : -1;
 
@@ -46,7 +67,7 @@ namespace Shopping
                 dgv2.CurrentCell = dgv2.Rows[selectedRowIndex2].Cells[0];
             }
 
-            UpdateTotals();
+            UpdateTotals();*/
         }
 
 
@@ -189,7 +210,7 @@ namespace Shopping
             if (e.ColumnIndex >= 0)
             {
                 string columnName = dgv1.Columns[e.ColumnIndex].Name;
-                SortOrder sortOrder = dgv1_sorted ? SortOrder.Ascending : SortOrder.Descending;
+                System.Windows.Forms.SortOrder sortOrder = dgv1_sorted ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
                 _shoppingCart.SortProducts(columnName, sortOrder);
                 LoadProducts();
             }
@@ -203,7 +224,7 @@ namespace Shopping
             if (e.ColumnIndex >= 0)
             {
                 string columnName = dgv2.Columns[e.ColumnIndex].Name;
-                SortOrder sortOrder = dgv2_sorted ? SortOrder.Ascending : SortOrder.Descending;
+                System.Windows.Forms.SortOrder sortOrder = dgv2_sorted ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
                 _buyingList.SortProducts(columnName, sortOrder);
                 LoadProducts();
             }
@@ -265,12 +286,19 @@ namespace Shopping
         {
             Form1 form1 = new Form1();
             form1.Show();
-            this.Close();  // 關閉當前的 Form
+            this.Hide();
         }
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
             Application.Exit();  // 完全關閉應用程式
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form3 form3 = new Form3();
+            form3.Show();
+            this.Hide();
         }
     }
 }

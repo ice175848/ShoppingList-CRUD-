@@ -38,6 +38,7 @@
             button3 = new Button();
             button4 = new Button();
             linkLabel1 = new LinkLabel();
+            linkLabel2 = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)dgv1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgv2).BeginInit();
@@ -136,19 +137,31 @@
             // linkLabel1
             // 
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new Point(16, 501);
+            linkLabel1.Location = new Point(12, 505);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(55, 15);
-            linkLabel1.TabIndex = 0;
+            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.TabIndex = 10;
             linkLabel1.TabStop = true;
-            linkLabel1.Text = "商品介面";
+            linkLabel1.Text = "linkLabel1";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
+            // linkLabel2
+            // 
+            linkLabel2.AutoSize = true;
+            linkLabel2.Location = new Point(82, 505);
+            linkLabel2.Name = "linkLabel2";
+            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.TabIndex = 10;
+            linkLabel2.TabStop = true;
+            linkLabel2.Text = "linkLabel2";
+            linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1000, 531);
+            Controls.Add(linkLabel2);
             Controls.Add(linkLabel1);
             Controls.Add(button4);
             Controls.Add(button3);
@@ -183,5 +196,6 @@
         private Button button3;
         private Button button4;
         private LinkLabel linkLabel1;
+        private LinkLabel linkLabel2;
     }
 }

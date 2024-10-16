@@ -35,6 +35,8 @@
             button5 = new Button();
             printDocument1 = new System.Drawing.Printing.PrintDocument();
             printPreviewDialog1 = new PrintPreviewDialog();
+            linkLabel1 = new LinkLabel();
+            linkLabel2 = new LinkLabel();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -233,11 +235,35 @@
             printPreviewDialog1.Name = "printPreviewDialog1";
             printPreviewDialog1.Visible = false;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(12, 426);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.TabIndex = 13;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "linkLabel1";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
+            // linkLabel2
+            // 
+            linkLabel2.AutoSize = true;
+            linkLabel2.Location = new Point(82, 426);
+            linkLabel2.Name = "linkLabel2";
+            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.TabIndex = 13;
+            linkLabel2.TabStop = true;
+            linkLabel2.Text = "linkLabel2";
+            linkLabel2.LinkClicked += linkLabel2_LinkClicked;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(661, 450);
+            Controls.Add(linkLabel2);
+            Controls.Add(linkLabel1);
             Controls.Add(splitContainer1);
             Name = "Form1";
             Text = "商品介面";
@@ -250,6 +276,7 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             ResumeLayout(false);
+            PerformLayout();
         }
 
         private DataGridView dataGridView1;
@@ -271,5 +298,7 @@
         private System.Drawing.Printing.PrintDocument printDocument1;
         private PrintPreviewDialog printPreviewDialog1;
         private Button button5;
+        private LinkLabel linkLabel1;
+        private LinkLabel linkLabel2;
     }
 }

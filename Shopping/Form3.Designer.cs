@@ -41,6 +41,8 @@
             button2 = new Button();
             button3 = new Button();
             dataGridView1 = new DataGridView();
+            linkLabel1 = new LinkLabel();
+            linkLabel2 = new LinkLabel();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -166,11 +168,35 @@
             dataGridView1.Size = new Size(383, 242);
             dataGridView1.TabIndex = 11;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Location = new Point(12, 426);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.TabIndex = 12;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "linkLabel1";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            // 
+            // linkLabel2
+            // 
+            linkLabel2.AutoSize = true;
+            linkLabel2.Location = new Point(93, 426);
+            linkLabel2.Name = "linkLabel2";
+            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.TabIndex = 13;
+            linkLabel2.TabStop = true;
+            linkLabel2.Text = "linkLabel2";
+            linkLabel2.LinkClicked += linkLabel2_LinkClicked;
+            // 
             // Form3
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(linkLabel2);
+            Controls.Add(linkLabel1);
             Controls.Add(dataGridView1);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -183,6 +209,7 @@
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -200,5 +227,7 @@
         private Button button2;
         private Button button3;
         private DataGridView dataGridView1;
+        private LinkLabel linkLabel1;
+        private LinkLabel linkLabel2;
     }
 }

@@ -47,7 +47,7 @@ namespace Shopping
 
 
         }
-            public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
+        public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
 
         private Image ResizeImage(Image image, Size size)
         {
@@ -72,6 +72,7 @@ namespace Shopping
                 DataTable productsTable = new DataTable();
                 adapter.Fill(productsTable);
 
+                // 確保 DataGridView 綁定正確的資料表
                 dataGridView1.DataSource = productsTable;
             }
         }
@@ -134,12 +135,12 @@ namespace Shopping
         }
 
 
-        public class ShoppingCart:ProductList
+        public class ShoppingCart : ProductList
         {
             //public List<Product> _products;
             public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
 
-            public ShoppingCart():base()
+            public ShoppingCart() : base()
             {
                 //_products = new List<Product>();
             }
@@ -439,10 +440,24 @@ namespace Shopping
         private void button6_Click(object sender, EventArgs e)//Print
         {
             this.Hide();
-            Form2 form2 = new Form2(_shoppingCart,this);
-            form2.ShowDialog(); 
+            Form2 form2 = new Form2();
+            form2.ShowDialog();
 
             this.Show();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form2 form2 = new Form2();
+            form2.Show();
+            this.Hide();
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Form3 form3 = new Form3();
+            form3.Show();
+            this.Hide();
         }
     }
 }
