@@ -139,21 +139,21 @@
             linkLabel1.AutoSize = true;
             linkLabel1.Location = new Point(12, 505);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.Size = new Size(79, 15);
             linkLabel1.TabIndex = 10;
             linkLabel1.TabStop = true;
-            linkLabel1.Text = "linkLabel1";
+            linkLabel1.Text = "前往商品介面";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // linkLabel2
             // 
             linkLabel2.AutoSize = true;
-            linkLabel2.Location = new Point(82, 505);
+            linkLabel2.Location = new Point(97, 505);
             linkLabel2.Name = "linkLabel2";
-            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.Size = new Size(91, 15);
             linkLabel2.TabIndex = 10;
             linkLabel2.TabStop = true;
-            linkLabel2.Text = "linkLabel2";
+            linkLabel2.Text = "前往客戶資料表";
             linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // Form2

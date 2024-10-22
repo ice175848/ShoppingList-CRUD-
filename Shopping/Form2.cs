@@ -16,6 +16,9 @@ namespace Shopping
         private ShoppingCart _shoppingCart;
         private BuyingList _buyingList;
         public string connectionString = "Server=.\\SQL2022;Database=SCdb;User Id=sa;Password=1qaz@wsx;";
+        private string lastSortedColumn = null;
+        private System.Windows.Forms.SortOrder lastSortOrder = System.Windows.Forms.SortOrder.None;
+
 
         public Form2()
         {
@@ -34,7 +37,22 @@ namespace Shopping
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            LoadShoppingCartData();
+
             LoadProducts();
+        }
+        private void LoadShoppingCartData()
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT * FROM ShoppingCart";  // 查詢購物車資料
+                SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                DataTable shoppingCartTable = new DataTable();
+                adapter.Fill(shoppingCartTable);
+
+                dgv2.DataSource = shoppingCartTable;  // 繫結資料到 dgv2
+            }
         }
 
         private void LoadProducts()
@@ -105,46 +123,127 @@ namespace Shopping
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // 檢查是否選取了DataGridView1中的行
             if (dgv1.SelectedRows.Count > 0)
             {
                 DataGridViewRow selectedRow = dgv1.SelectedRows[0];
-                Product selectedProduct = selectedRow.DataBoundItem as Product;
+                var productId = selectedRow.Cells["ProductID"].Value.ToString();
+                var name = selectedRow.Cells["Name"].Value.ToString();
+                var price = Convert.ToDecimal(selectedRow.Cells["Price"].Value);
+                var quantityToMove = (int)numericUpDown1.Value;
 
-                if (selectedProduct != null)
+                // 確認庫存不會小於0
+                if (Convert.ToInt32(selectedRow.Cells["Quantity"].Value) < quantityToMove)
                 {
-                    int quantityToMove = (int)numericUpDown1.Value;
+                    MessageBox.Show("庫存不足，無法加入購物車。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-                    if (selectedProduct.Quantity < quantityToMove)
+                // 更新 Products 表中的庫存數量
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string updateQuery = "UPDATE Products SET Quantity = Quantity - @quantity WHERE ProductID = @productId";
+                    SqlCommand command = new SqlCommand(updateQuery, connection);
+                    command.Parameters.AddWithValue("@quantity", quantityToMove);
+                    command.Parameters.AddWithValue("@productId", productId);
+                    command.ExecuteNonQuery();
+                }
+
+                // 檢查購物車中是否已經存在該商品
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string checkQuery = "SELECT COUNT(*) FROM ShoppingCart WHERE ProductID = @productId";
+                    SqlCommand checkCommand = new SqlCommand(checkQuery, connection);
+                    checkCommand.Parameters.AddWithValue("@productId", productId);
+                    int count = (int)checkCommand.ExecuteScalar();
+
+                    if (count > 0)
                     {
-                        MessageBox.Show("庫存不足，無法加入購物車。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
-                    selectedProduct.Quantity -= quantityToMove;
-
-                    var existingProductInCart = _buyingList._products.FirstOrDefault(p => p.Id == selectedProduct.Id);
-
-                    if (existingProductInCart != null)
-                    {
-                        existingProductInCart.Quantity += quantityToMove;
+                        // 如果購物車中已經存在該商品，更新數量
+                        string updateCartQuery = "UPDATE ShoppingCart SET Quantity = Quantity + @quantity WHERE ProductID = @productId";
+                        SqlCommand updateCartCommand = new SqlCommand(updateCartQuery, connection);
+                        updateCartCommand.Parameters.AddWithValue("@quantity", quantityToMove);
+                        updateCartCommand.Parameters.AddWithValue("@productId", productId);
+                        updateCartCommand.ExecuteNonQuery();
                     }
                     else
                     {
-                        var productToAdd = new Product(selectedProduct.Id, selectedProduct.Name, selectedProduct.Price, quantityToMove);
-                        _buyingList.AddProduct(productToAdd);
+                        // 如果購物車中沒有該商品，插入新行
+                        string insertQuery = "INSERT INTO ShoppingCart (ProductID, Name, Price, Quantity) VALUES (@productId, @name, @price, @quantity)";
+                        SqlCommand command = new SqlCommand(insertQuery, connection);
+                        command.Parameters.AddWithValue("@productId", productId);
+                        command.Parameters.AddWithValue("@name", name);
+                        command.Parameters.AddWithValue("@price", price);
+                        command.Parameters.AddWithValue("@quantity", quantityToMove);
+                        command.ExecuteNonQuery();
                     }
-
-                    LoadProducts(); // 重新加載產品並更新總數
                 }
-            }
-            else
-            {
-                MessageBox.Show("請選取一個商品加入購物車。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                RememberCurrentSort();
+                // 同步更新 dgv1 和 dgv2
+                LoadProducts();           // 更新 dgv1
+                LoadShoppingCartData();   // 更新 dgv2
+                 // 恢復排序狀態
+                RestoreSort();
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
+        {
+            if (dgv2.SelectedRows.Count > 0)
+            {
+                DataGridViewRow selectedRow = dgv2.SelectedRows[0];
+                var productId = selectedRow.Cells["ProductID"].Value.ToString();
+                var quantityToMove = (int)numericUpDown1.Value;
+
+                if (Convert.ToInt32(selectedRow.Cells["Quantity"].Value) < quantityToMove)
+                {
+                    MessageBox.Show("購物車內商品數量不足，無法返還庫存。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // 更新購物車內商品數量
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string updateQuery = "UPDATE ShoppingCart SET Quantity = Quantity - @quantity WHERE ProductID = @productId";
+                    SqlCommand command = new SqlCommand(updateQuery, connection);
+                    command.Parameters.AddWithValue("@quantity", quantityToMove);
+                    command.Parameters.AddWithValue("@productId", productId);
+                    command.ExecuteNonQuery();
+
+                    // 如果購物車內的商品數量變為 0，則從購物車移除
+                    string deleteQuery = "DELETE FROM ShoppingCart WHERE ProductID = @productId AND Quantity = 0";
+                    SqlCommand deleteCommand = new SqlCommand(deleteQuery, connection);
+                    deleteCommand.Parameters.AddWithValue("@productId", productId);
+                    deleteCommand.ExecuteNonQuery();
+                }
+
+                // 更新 Products 表內商品數量
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string updateStockQuery = "UPDATE Products SET Quantity = Quantity + @quantity WHERE ProductID = @productId";
+                    SqlCommand command = new SqlCommand(updateStockQuery, connection);
+                    command.Parameters.AddWithValue("@quantity", quantityToMove);
+                    command.Parameters.AddWithValue("@productId", productId);
+                    command.ExecuteNonQuery();
+                }
+
+                // 更新 dgv1 和 dgv2
+                LoadProducts();           // 更新庫存（dgv1）
+                LoadShoppingCartData();   // 更新購物車（dgv2）
+            }
+            else
+            {
+                MessageBox.Show("請選取一個商品返還庫存。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+
+
+
+        /*private void button2_Click(object sender, EventArgs e)
         {
             if (dgv2.SelectedRows.Count > 0)
             {
@@ -186,7 +285,7 @@ namespace Shopping
             {
                 MessageBox.Show("請選取一個商品返還庫存。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-        }
+        }*/
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.RowIndex < dgv1.Rows.Count)
@@ -203,19 +302,29 @@ namespace Shopping
             }
         }
 
-        bool dgv1_sorted;
+        private bool dgv1_sorted = false;
+
         private void dgv1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            dgv1_sorted = !dgv1_sorted;//First time become true
-            if (e.ColumnIndex >= 0)
+            string columnName = dgv1.Columns[e.ColumnIndex].Name;
+            System.Windows.Forms.SortOrder sortOrder = dgv1_sorted ? System.Windows.Forms.SortOrder.Descending : System.Windows.Forms.SortOrder.Ascending;
+
+            if (lastSortedColumn != columnName)
             {
-                string columnName = dgv1.Columns[e.ColumnIndex].Name;
-                System.Windows.Forms.SortOrder sortOrder = dgv1_sorted ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
-                _shoppingCart.SortProducts(columnName, sortOrder);
-                LoadProducts();
+                // 如果點擊了不同的列，重置為升序排序
+                sortOrder = System.Windows.Forms.SortOrder.Ascending;
+                dgv1_sorted = false;
             }
 
+            dgv1_sorted = !dgv1_sorted; // 切換排序方向
+
+            // 執行排序
+            dgv1.Sort(dgv1.Columns[columnName], sortOrder == System.Windows.Forms.SortOrder.Ascending ? ListSortDirection.Ascending : ListSortDirection.Descending);
+
+            lastSortedColumn = columnName; // 記錄最後排序的列
+            lastSortOrder = sortOrder;     // 記錄最後的排序方向
         }
+
         bool dgv2_sorted;
 
         private void dgv2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -227,6 +336,29 @@ namespace Shopping
                 System.Windows.Forms.SortOrder sortOrder = dgv2_sorted ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
                 _buyingList.SortProducts(columnName, sortOrder);
                 LoadProducts();
+            }
+        }
+        private void RememberCurrentSort()
+        {
+            if (dgv1.SortedColumn != null)
+            {
+                lastSortedColumn = dgv1.SortedColumn.Name;
+                lastSortOrder = dgv1.SortOrder;
+            }
+            else
+            {
+                lastSortedColumn = null;
+                lastSortOrder = System.Windows.Forms.SortOrder.None;
+            }
+        }
+
+        private void RestoreSort()
+        {
+            if (!string.IsNullOrEmpty(lastSortedColumn))
+            {
+                ListSortDirection direction = (lastSortOrder == System.Windows.Forms.SortOrder.Ascending) ?
+                                                ListSortDirection.Ascending : ListSortDirection.Descending;
+                dgv1.Sort(dgv1.Columns[lastSortedColumn], direction);
             }
         }
 

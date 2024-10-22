@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using static Shopping.Form2;
 using System.Data;
 using System.Data.SqlClient;
+using System.ComponentModel;
 
 namespace Shopping
 {
@@ -44,6 +45,12 @@ namespace Shopping
             _shoppingCart = new ShoppingCart();
             //_shoppingCart.AddDefaultProducts();
             LoadProducts();
+            dataGridView1.ScrollBars = ScrollBars.Both;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.DataSource = null;
+            dataGridView1.DataSource = _shoppingCart.GetProducts();
+            dataGridView1.Refresh();
 
 
         }
@@ -242,14 +249,14 @@ namespace Shopping
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)//Create
+        private void button1_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(IDTextBox.Text, out int id))
             {
-
                 MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             var existingId = _shoppingCart.GetProducts().FirstOrDefault(p => p.Id == id);
             if (existingId != null)
             {
@@ -279,59 +286,70 @@ namespace Shopping
             var product = new Product(id, name, price, quantity);
             _shoppingCart.AddProduct(product);
 
-            RefreshDataGrid();
+            // Reload products from the database
+            LoadProducts();  // This reloads the full set of products from the database
             IDTextBox.Text = (int.Parse(IDTextBox.Text) + 1).ToString();
         }
 
+
         private void button2_Click(object sender, EventArgs e)
         {
-            // 優先順序: id > Name > price > quantity
-            List<Product> query = null;
-
-            // 優先順序1: id
-            if (int.TryParse(IDTextBox.Text, out int idValue))
-            {
-                query = _shoppingCart.GetProducts().Where(p => p.Id == idValue).ToList();
-            }
-            // 優先順序2: Name
-            else if (!string.IsNullOrWhiteSpace(NameTextBox.Text))
-            {
-                string name = NameTextBox.Text;
-                query = _shoppingCart.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
-            // 優先順序3: price
-            else if (decimal.TryParse(PriceTextBox.Text, out decimal priceValue))
-            {
-                query = _shoppingCart.GetProducts().Where(p => p.Price == priceValue).ToList();
-            }
-            // 優先順序4: quantity
-            else if (int.TryParse(QuantityTextBox.Text, out int quantityValue))
-            {
-                query = _shoppingCart.GetProducts().Where(p => p.Quantity == quantityValue).ToList();
-            }
-
-            if (query == null || query.Count == 0)
-            {
-                MessageBox.Show("未找到符合條件的商品。", "查詢結果", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            dataGridView1.DataSource = null;
-            dataGridView1.DataSource = _shoppingCart.GetProducts();
-
+            // 清除之前的選擇
             dataGridView1.ClearSelection();
+
             foreach (DataGridViewRow row in dataGridView1.Rows)
             {
-                var product = row.DataBoundItem as Product;
-                if (product != null && query.Contains(product))
+                bool match = false;
+
+                // 優先順序1: ProductID
+                if (int.TryParse(IDTextBox.Text, out int idValue))
+                {
+                    if (row.Cells["ProductID"].Value != null && (int)row.Cells["ProductID"].Value == idValue)
+                    {
+                        match = true;
+                    }
+                }
+                // 優先順序2: Name
+                else if (!string.IsNullOrWhiteSpace(NameTextBox.Text))
+                {
+                    string name = row.Cells["Name"].Value?.ToString();
+                    if (!string.IsNullOrEmpty(name) && name.Equals(NameTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                    {
+                        match = true;
+                    }
+                }
+                // 優先順序3: Price
+                else if (decimal.TryParse(PriceTextBox.Text, out decimal priceValue))
+                {
+                    if (row.Cells["Price"].Value != null && (decimal)row.Cells["Price"].Value == priceValue)
+                    {
+                        match = true;
+                    }
+                }
+                // 優先順序4: Quantity
+                else if (int.TryParse(QuantityTextBox.Text, out int quantityValue))
+                {
+                    if (row.Cells["Quantity"].Value != null && (int)row.Cells["Quantity"].Value == quantityValue)
+                    {
+                        match = true;
+                    }
+                }
+
+                // 如果符合條件，選中該列
+                if (match)
                 {
                     row.Selected = true;
+                    // 自動滾動到選中的列
+                    dataGridView1.FirstDisplayedScrollingRowIndex = row.Index;
                 }
             }
         }
 
 
-        private void button3_Click(object sender, EventArgs e)//Update
+
+
+
+        private void button3_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(IDTextBox.Text, out int id))
             {
@@ -358,10 +376,32 @@ namespace Shopping
                 return;
             }
 
-            _shoppingCart.UpdateProduct(id, name, price, quantity);
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE Products SET Name = @name, Price = @price, Quantity = @quantity WHERE ProductID = @id";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@name", name);
+                    command.Parameters.AddWithValue("@price", price);
+                    command.Parameters.AddWithValue("@quantity", quantity);
 
-            RefreshDataGrid();
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("商品更新成功。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadProducts();  // 刷新資料
+                    }
+                    else
+                    {
+                        MessageBox.Show("找不到要更新的商品。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
         }
+
+
 
         private void button4_Click(object sender, EventArgs e)//Delete
         {
@@ -395,19 +435,27 @@ namespace Shopping
                 }
             }
         }
-        bool sorted;
+        private bool sorted = false; // 用來切換排序方向
+
         private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            sorted = !sorted;//First time become true
-            if (e.ColumnIndex >= 0)
-            {
-                string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
-                System.Windows.Forms.SortOrder sortOrder = sorted ? System.Windows.Forms.SortOrder.Ascending : System.Windows.Forms.SortOrder.Descending;
-                _shoppingCart.SortProducts(columnName, sortOrder);
+            string columnName = dataGridView1.Columns[e.ColumnIndex].Name;
+            ListSortDirection direction;
 
-                RefreshDataGrid();
+            if (sorted)
+            {
+                direction = ListSortDirection.Descending;
             }
+            else
+            {
+                direction = ListSortDirection.Ascending;
+            }
+
+            dataGridView1.Sort(dataGridView1.Columns[columnName], direction);
+            sorted = !sorted; // 切換排序方向
         }
+
+
 
         private System.Windows.Forms.SortOrder GetSortOrder(int columnIndex)
         {

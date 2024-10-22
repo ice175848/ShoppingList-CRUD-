@@ -30,9 +30,7 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
-            button6 = new Button();
             splitContainer1 = new SplitContainer();
-            button5 = new Button();
             printDocument1 = new System.Drawing.Printing.PrintDocument();
             printPreviewDialog1 = new PrintPreviewDialog();
             linkLabel1 = new LinkLabel();
@@ -59,7 +57,7 @@
             // button1
             // 
             button1.BackgroundImageLayout = ImageLayout.None;
-            button1.Location = new Point(6, 16);
+            button1.Location = new Point(6, 34);
             button1.Name = "button1";
             button1.Size = new Size(75, 23);
             button1.TabIndex = 4;
@@ -156,7 +154,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(6, 56);
+            button2.Location = new Point(6, 77);
             button2.Name = "button2";
             button2.Size = new Size(75, 23);
             button2.TabIndex = 7;
@@ -166,7 +164,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(6, 97);
+            button3.Location = new Point(6, 120);
             button3.Name = "button3";
             button3.Size = new Size(75, 23);
             button3.TabIndex = 8;
@@ -176,23 +174,13 @@
             // 
             // button4
             // 
-            button4.Location = new Point(6, 140);
+            button4.Location = new Point(6, 166);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 9;
             button4.Text = "Delete";
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
-            // 
-            // button6
-            // 
-            button6.Location = new Point(6, 228);
-            button6.Name = "button6";
-            button6.Size = new Size(186, 23);
-            button6.TabIndex = 11;
-            button6.Text = "To Shopping";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
             // 
             // splitContainer1
             // 
@@ -201,10 +189,8 @@
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(button5);
             splitContainer1.Panel1.Controls.Add(button1);
             splitContainer1.Panel1.Controls.Add(panel1);
-            splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(button2);
             splitContainer1.Panel1.Controls.Add(button4);
             splitContainer1.Panel1.Controls.Add(button3);
@@ -215,15 +201,6 @@
             splitContainer1.Size = new Size(644, 389);
             splitContainer1.SplitterDistance = 214;
             splitContainer1.TabIndex = 12;
-            // 
-            // button5
-            // 
-            button5.Location = new Point(6, 184);
-            button5.Name = "button5";
-            button5.Size = new Size(75, 23);
-            button5.TabIndex = 13;
-            button5.Text = "button5";
-            button5.UseVisualStyleBackColor = true;
             // 
             // printPreviewDialog1
             // 
@@ -240,10 +217,10 @@
             linkLabel1.AutoSize = true;
             linkLabel1.Location = new Point(12, 426);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.Size = new Size(67, 15);
             linkLabel1.TabIndex = 13;
             linkLabel1.TabStop = true;
-            linkLabel1.Text = "linkLabel1";
+            linkLabel1.Text = "前往購物車";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // linkLabel2
@@ -251,10 +228,10 @@
             linkLabel2.AutoSize = true;
             linkLabel2.Location = new Point(82, 426);
             linkLabel2.Name = "linkLabel2";
-            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.Size = new Size(91, 15);
             linkLabel2.TabIndex = 13;
             linkLabel2.TabStop = true;
-            linkLabel2.Text = "linkLabel2";
+            linkLabel2.Text = "前往客戶資料表";
             linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // Form1
@@ -289,7 +266,6 @@
         private Button button2;
         private Button button3;
         private Button button4;
-        private Button button6;
         private SplitContainer splitContainer1;
         private Label label1;
         private Label label4;
@@ -297,7 +273,6 @@
         private Label label2;
         private System.Drawing.Printing.PrintDocument printDocument1;
         private PrintPreviewDialog printPreviewDialog1;
-        private Button button5;
         private LinkLabel linkLabel1;
         private LinkLabel linkLabel2;
     }

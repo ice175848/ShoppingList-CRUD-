@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             button1 = new Button();
             comboBox1 = new ComboBox();
             checkedListBox1 = new CheckedListBox();
@@ -43,8 +44,10 @@
             dataGridView1 = new DataGridView();
             linkLabel1 = new LinkLabel();
             linkLabel2 = new LinkLabel();
+            bindingSource1 = new BindingSource(components);
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)bindingSource1).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -150,6 +153,7 @@
             button2.TabIndex = 9;
             button2.Text = "更正";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // button3
             // 
@@ -159,12 +163,15 @@
             button3.TabIndex = 10;
             button3.Text = "刪除";
             button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToOrderColumns = true;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(367, 34);
             dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
             dataGridView1.Size = new Size(383, 242);
             dataGridView1.TabIndex = 11;
             // 
@@ -173,10 +180,10 @@
             linkLabel1.AutoSize = true;
             linkLabel1.Location = new Point(12, 426);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(64, 15);
+            linkLabel1.Size = new Size(79, 15);
             linkLabel1.TabIndex = 12;
             linkLabel1.TabStop = true;
-            linkLabel1.Text = "linkLabel1";
+            linkLabel1.Text = "前往商品介面";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // linkLabel2
@@ -184,10 +191,10 @@
             linkLabel2.AutoSize = true;
             linkLabel2.Location = new Point(93, 426);
             linkLabel2.Name = "linkLabel2";
-            linkLabel2.Size = new Size(64, 15);
+            linkLabel2.Size = new Size(67, 15);
             linkLabel2.TabIndex = 13;
             linkLabel2.TabStop = true;
-            linkLabel2.Text = "linkLabel2";
+            linkLabel2.Text = "前往購物車";
             linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
             // Form3
@@ -208,6 +215,7 @@
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)bindingSource1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -229,5 +237,6 @@
         private DataGridView dataGridView1;
         private LinkLabel linkLabel1;
         private LinkLabel linkLabel2;
+        private BindingSource bindingSource1;
     }
 }
