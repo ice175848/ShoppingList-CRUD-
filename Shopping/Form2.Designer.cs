@@ -39,6 +39,8 @@
             button4 = new Button();
             linkLabel1 = new LinkLabel();
             linkLabel2 = new LinkLabel();
+            textBox1 = new TextBox();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgv1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dgv2).BeginInit();
@@ -126,7 +128,7 @@
             // button4
             // 
             button4.BackColor = SystemColors.ActiveCaption;
-            button4.Location = new Point(464, 501);
+            button4.Location = new Point(525, 501);
             button4.Name = "button4";
             button4.Size = new Size(75, 23);
             button4.TabIndex = 9;
@@ -156,11 +158,30 @@
             linkLabel2.Text = "前往客戶資料表";
             linkLabel2.LinkClicked += linkLabel2_LinkClicked;
             // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(420, 502);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(100, 23);
+            textBox1.TabIndex = 11;
+            textBox1.Text = "16423286";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(359, 505);
+            label2.Name = "label2";
+            label2.Size = new Size(55, 15);
+            label2.TabIndex = 12;
+            label2.Text = "統一編號";
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1000, 531);
+            Controls.Add(label2);
+            Controls.Add(textBox1);
             Controls.Add(linkLabel2);
             Controls.Add(linkLabel1);
             Controls.Add(button4);
@@ -197,5 +218,7 @@
         private Button button4;
         private LinkLabel linkLabel1;
         private LinkLabel linkLabel2;
+        private TextBox textBox1;
+        private Label label2;
     }
 }

@@ -172,7 +172,7 @@
             dataGridView1.Location = new Point(367, 34);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(383, 242);
+            dataGridView1.Size = new Size(606, 242);
             dataGridView1.TabIndex = 11;
             // 
             // linkLabel1
@@ -201,7 +201,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1022, 450);
             Controls.Add(linkLabel2);
             Controls.Add(linkLabel1);
             Controls.Add(dataGridView1);

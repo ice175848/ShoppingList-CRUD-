@@ -52,10 +52,14 @@ namespace Shopping
                 DataTable customerTable = new DataTable();
                 adapter.Fill(customerTable);
 
-                // 繫結資料到 DataGridView
+                // 綁定資料到 DataGridView
                 dataGridView1.DataSource = customerTable;
+
+                // 自動調整欄位大小，讓每一列根據內容調整大小
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             }
         }
+
 
         private void Form3_Load(object sender, EventArgs e)
         {
@@ -90,23 +94,43 @@ namespace Shopping
 
         private void button2_Click(object sender, EventArgs e)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                string query = "UPDATE CustomerInfo SET CompanyName = @CompanyName, Region = @Region, PaymentMethod = @PaymentMethod WHERE UnifiedID = @UnifiedID";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@UnifiedID", textBox2.Text);
-                command.Parameters.AddWithValue("@CompanyName", textBox1.Text);
-                command.Parameters.AddWithValue("@Region", comboBox1.SelectedItem.ToString());
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "UPDATE CustomerInfo SET CompanyName = @CompanyName, Region = @Region, PaymentMethod = @PaymentMethod WHERE UnifiedID = @UnifiedID";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@UnifiedID", textBox2.Text);
+                    command.Parameters.AddWithValue("@CompanyName", textBox1.Text);
+                    command.Parameters.AddWithValue("@Region", comboBox1.SelectedItem.ToString());
 
-                var selectedPaymentMethods = checkedListBox1.CheckedItems.Cast<string>();
-                command.Parameters.AddWithValue("@PaymentMethod", string.Join(", ", selectedPaymentMethods));
+                    var selectedPaymentMethods = checkedListBox1.CheckedItems.Cast<string>();
+                    command.Parameters.AddWithValue("@PaymentMethod", string.Join(", ", selectedPaymentMethods));
 
-                command.ExecuteNonQuery();
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("客戶資料更新成功。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("找不到客戶資料。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+
+                LoadCustomerData();  // 重新加載資料
             }
-
-            LoadCustomerData();  // 重新加載資料
+            catch (SqlException sqlEx)
+            {
+                MessageBox.Show("資料庫錯誤：" + sqlEx.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("發生錯誤：" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
 
         private void button3_Click(object sender, EventArgs e)
         {

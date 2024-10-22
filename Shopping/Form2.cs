@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using static Shopping.Form1;
 using static Shopping.Form2;
+using System.Drawing.Printing;
 
 namespace Shopping
 {
@@ -38,7 +39,8 @@ namespace Shopping
         private void Form2_Load(object sender, EventArgs e)
         {
             LoadShoppingCartData();
-
+            dgv1.AllowUserToAddRows = false;
+            dgv2.AllowUserToAddRows = false;
             LoadProducts();
         }
         private void LoadShoppingCartData()
@@ -364,61 +366,164 @@ namespace Shopping
 
         private void button3_Click(object sender, EventArgs e)
         {
-            List<Product> query = null;
-            if (!string.IsNullOrWhiteSpace(NameTextBox.Text))
+            string searchName = NameTextBox.Text;
+            if (!string.IsNullOrWhiteSpace(searchName))
             {
-                string name = NameTextBox.Text;
-                query = _shoppingCart.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
-
+                // 清除之前的選擇
                 dgv1.ClearSelection();
+                dgv2.ClearSelection();
+
+                // 搜尋並標示 dgv1
                 foreach (DataGridViewRow row in dgv1.Rows)
                 {
-                    var product = row.DataBoundItem as Product;
-                    if (product != null && query.Contains(product))
+                    if (row.Cells["Name"].Value != null && row.Cells["Name"].Value.ToString().Equals(searchName, StringComparison.OrdinalIgnoreCase))
                     {
                         row.Selected = true;
+                        dgv1.FirstDisplayedScrollingRowIndex = row.Index;  // 滾動到找到的項目
                     }
                 }
-                query = _buyingList.GetProducts().Where(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).ToList();
 
-                dgv2.ClearSelection();
+                // 搜尋並標示 dgv2
                 foreach (DataGridViewRow row in dgv2.Rows)
                 {
-                    var product = row.DataBoundItem as Product;
-                    if (product != null && query.Contains(product))
+                    if (row.Cells["Name"].Value != null && row.Cells["Name"].Value.ToString().Equals(searchName, StringComparison.OrdinalIgnoreCase))
                     {
                         row.Selected = true;
+                        dgv2.FirstDisplayedScrollingRowIndex = row.Index;  // 滾動到找到的項目
                     }
                 }
+            }
+            else
+            {
+                MessageBox.Show("請輸入搜尋名稱。", "搜尋錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            // 構建顯示購物車內容的訊息
-            string message = "購物車內容:\n\n";
+            if (dgv2.Rows.Count == 0)
+            {
+                MessageBox.Show("購物車為空，無法結帳。", "結帳錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string unifiedId = textBox1.Text;
+            if (string.IsNullOrWhiteSpace(unifiedId))
+            {
+                MessageBox.Show("請輸入統一編號。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string customerName = GetCustomerNameByUnifiedID(unifiedId);
+
+            if (string.IsNullOrEmpty(customerName))
+            {
+                MessageBox.Show("找不到該統一編號對應的客戶。", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // 構建購物車內容的訊息
+            string message = $"您的名稱是 {customerName} 公司\n您購買的項目是：\n\n";
             int totalQuantity = 0;
             decimal totalAmount = 0m;
 
-            foreach (var product in _buyingList.GetProducts())
+            foreach (DataGridViewRow row in dgv2.Rows)
             {
-                message += $"品項: {product.Name}\n數量: {product.Quantity}\n金額: {product.Price * product.Quantity:C}\n\n";
-                totalQuantity += product.Quantity;
-                totalAmount += product.Price * product.Quantity;
+                if (row.Cells["Name"].Value != null && row.Cells["Quantity"].Value != null && row.Cells["Price"].Value != null)
+                {
+                    string name = row.Cells["Name"].Value.ToString();
+                    int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+                    decimal price = Convert.ToDecimal(row.Cells["Price"].Value);
+                    decimal amount = price * quantity;
+
+                    message += $"品項: {name}\n數量: {quantity}\n金額: {amount:C}\n\n";
+                    totalQuantity += quantity;
+                    totalAmount += amount;
+                }
             }
 
             message += $"總數量: {totalQuantity}\n";
             message += $"總金額: {totalAmount:C}\n";
 
             // 顯示訊息框，帶有確認按鈕
-            MessageBox.Show(message, "購物車總覽", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var result = MessageBox.Show(message, "購物車總覽", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            if (result == DialogResult.OK)
+            {
+                // 打印銷售明細
+                PrintSalesDetails(customerName, totalQuantity, totalAmount);
+            }
         }
+
+
+        private string GetCustomerNameByUnifiedID(string unifiedId)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "SELECT CompanyName FROM CustomerInfo WHERE UnifiedID = @unifiedId";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@unifiedId", unifiedId);
+
+                var result = command.ExecuteScalar();
+                return result?.ToString();
+            }
+        }
+
+
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Form1 form1 = new Form1();
             form1.Show();
             this.Hide();
+        }
+
+        private void PrintSalesDetails(string customerName, int totalQuantity, decimal totalAmount)
+        {
+            PrintDocument printDocument = new PrintDocument();
+            printDocument.PrintPage += (sender, e) =>
+            {
+                // 設定打印的內容
+                float yPosition = 100;
+                float lineHeight = 20;
+                Font printFont = new Font("Arial", 12);
+
+                // 打印客戶名稱
+                e.Graphics.DrawString($"客戶名稱: {customerName}", printFont, Brushes.Black, new PointF(100, yPosition));
+                yPosition += lineHeight;
+
+                // 打印購買物品詳細資料
+                e.Graphics.DrawString("購買明細:", printFont, Brushes.Black, new PointF(100, yPosition));
+                yPosition += lineHeight;
+
+                foreach (DataGridViewRow row in dgv2.Rows)
+                {
+                    if (row.Cells["Name"].Value != null && row.Cells["Quantity"].Value != null && row.Cells["Price"].Value != null)
+                    {
+                        string name = row.Cells["Name"].Value.ToString();
+                        int quantity = Convert.ToInt32(row.Cells["Quantity"].Value);
+                        decimal price = Convert.ToDecimal(row.Cells["Price"].Value);
+                        decimal amount = price * quantity;
+
+                        // 打印每個商品的詳細信息
+                        e.Graphics.DrawString($"品項: {name}, 數量: {quantity}, 價格: {price:C}, 金額: {amount:C}", printFont, Brushes.Black, new PointF(100, yPosition));
+                        yPosition += lineHeight;
+                    }
+                }
+
+                // 打印總數量和總金額
+                e.Graphics.DrawString($"總數量: {totalQuantity}", printFont, Brushes.Black, new PointF(100, yPosition));
+                yPosition += lineHeight;
+                e.Graphics.DrawString($"總金額: {totalAmount:C}", printFont, Brushes.Black, new PointF(100, yPosition));
+            };
+
+            // 顯示打印預覽
+            PrintPreviewDialog printPreviewDialog = new PrintPreviewDialog
+            {
+                Document = printDocument
+            };
+            printPreviewDialog.ShowDialog();
         }
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)

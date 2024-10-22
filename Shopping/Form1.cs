@@ -251,44 +251,60 @@ namespace Shopping
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!int.TryParse(IDTextBox.Text, out int id))
+            try
             {
-                MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+                if (!int.TryParse(IDTextBox.Text, out int id))
+                {
+                    MessageBox.Show("請輸入有效的商品ID。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
-            var existingId = _shoppingCart.GetProducts().FirstOrDefault(p => p.Id == id);
-            if (existingId != null)
+                string name = NameTextBox.Text;
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    MessageBox.Show("請輸入有效的商品名稱。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!decimal.TryParse(PriceTextBox.Text, out decimal price))
+                {
+                    MessageBox.Show("請輸入有效的商品價格。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (!int.TryParse(QuantityTextBox.Text, out int quantity))
+                {
+                    MessageBox.Show("請輸入有效的商品數量。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO Products (ProductID, Name, Price, Quantity) VALUES (@id, @name, @price, @quantity)";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@name", name);
+                        command.Parameters.AddWithValue("@price", price);
+                        command.Parameters.AddWithValue("@quantity", quantity);
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                MessageBox.Show("商品新增成功。", "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadProducts(); // 刷新資料
+            }
+            catch (SqlException sqlEx)
             {
-                MessageBox.Show("該ID的商品已經存在。請使用其他ID。", "ID已存在", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // 捕捉 SQL 特定錯誤
+                MessageBox.Show("資料庫錯誤：" + sqlEx.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            string name = NameTextBox.Text;
-            if (string.IsNullOrWhiteSpace(name))
+            catch (Exception ex)
             {
-                MessageBox.Show("請輸入有效的商品名稱。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // 捕捉其他一般錯誤
+                MessageBox.Show("發生錯誤：" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            if (!decimal.TryParse(PriceTextBox.Text, out decimal price))
-            {
-                MessageBox.Show("請輸入有效的商品價格。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (!int.TryParse(QuantityTextBox.Text, out int quantity))
-            {
-                MessageBox.Show("請輸入有效的商品數量。", "輸入錯誤", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            var product = new Product(id, name, price, quantity);
-            _shoppingCart.AddProduct(product);
-
-            // Reload products from the database
-            LoadProducts();  // This reloads the full set of products from the database
-            IDTextBox.Text = (int.Parse(IDTextBox.Text) + 1).ToString();
         }
 
 
@@ -422,14 +438,15 @@ namespace Shopping
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.RowIndex < dataGridView1.Rows.Count && e.ColumnIndex >= 0)
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
                 var selectedRow = dataGridView1.Rows[e.RowIndex];
 
                 if (selectedRow != null)
                 {
-                    IDTextBox.Text = selectedRow.Cells["Id"].Value?.ToString();
-                    NameTextBox.Text = selectedRow.Cells["Name"].Value?.ToString() ?? "Unnamed";
+                    // 將 "Id" 改為 "ProductID" 或者正確的欄位名稱
+                    IDTextBox.Text = selectedRow.Cells["ProductID"].Value?.ToString();
+                    NameTextBox.Text = selectedRow.Cells["Name"].Value?.ToString();
                     PriceTextBox.Text = selectedRow.Cells["Price"].Value?.ToString();
                     QuantityTextBox.Text = selectedRow.Cells["Quantity"].Value?.ToString();
                 }
